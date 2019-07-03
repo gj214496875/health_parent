@@ -27,12 +27,23 @@ public class CheckItemController {
     }
 
     @PostMapping("findPage")
-    public PageResult findList(@RequestBody QueryPageBean queryPageBean) {
+    public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
         try {
-            return checkItemService.findList(queryPageBean);
+            return checkItemService.findPage(queryPageBean);
         } catch (Exception e) {
             System.out.println(e);
             return new PageResult(0L, null);
+        }
+
+    }
+
+    @GetMapping("findAll")
+    public Result findAll() {
+        try {
+            return new Result(true, MessageConstant.QUERY_CHECKITEM_SUCCESS, checkItemService.findAll());
+        } catch (Exception e) {
+            System.out.println(e);
+            return new Result(false,MessageConstant.QUERY_CHECKITEM_FAIL);
         }
 
     }
@@ -41,12 +52,12 @@ public class CheckItemController {
     public Result delete(Integer id) {
         try {
             checkItemService.delete(id);
-        }catch (RuntimeException e){
-            return new Result(false,e.getMessage());
-        }catch (Exception e){
+        } catch (RuntimeException e) {
+            return new Result(false, e.getMessage());
+        } catch (Exception e) {
             return new Result(false, MessageConstant.DELETE_CHECKITEM_FAIL);
         }
-        return new Result(true,MessageConstant.DELETE_CHECKITEM_SUCCESS);
+        return new Result(true, MessageConstant.DELETE_CHECKITEM_SUCCESS);
     }
 
     @PutMapping("edit")

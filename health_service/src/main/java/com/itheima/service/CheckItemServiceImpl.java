@@ -10,6 +10,8 @@ import com.itheima.pojo.CheckItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 检查项服务
  */
@@ -25,9 +27,9 @@ public class CheckItemServiceImpl implements CheckItemService {
     }
 
     @Override
-    public PageResult findList(QueryPageBean queryPageBean) {
+    public PageResult findPage(QueryPageBean queryPageBean) {
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
-        Page<CheckItem> list = checkItemDao.findList(queryPageBean.getQueryString());
+        Page<CheckItem> list = checkItemDao.findPage(queryPageBean.getQueryString());
         return new PageResult(list.getTotal(), list.getResult());
     }
 
@@ -38,12 +40,16 @@ public class CheckItemServiceImpl implements CheckItemService {
             //当前检查项被引用，不能删除
             throw new RuntimeException("当前检查项被引用，不能删除");
         }
-
         checkItemDao.delete(id);
     }
 
     @Override
     public void edit(CheckItem checkItem) {
         checkItemDao.edit(checkItem);
+    }
+
+    @Override
+    public List<CheckItem> findAll() {
+        return checkItemDao.findAll();
     }
 }

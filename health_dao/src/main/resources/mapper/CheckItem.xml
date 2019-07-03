@@ -46,10 +46,13 @@
     <select id="findCountByCheckItemId" resultType="long" parameterType="int">
         select count(*) from t_checkgroup_checkitem where checkitem_id = #{checkitem_id}
     </select>
-    <select id="findList" resultType="com.itheima.pojo.CheckItem">
+    <select id="findPage" resultType="com.itheima.pojo.CheckItem">
         select * from t_checkitem
         <if test="queryString != null and queryString.length > 0">
-            where code = #{queryString} or name = #{queryString}
+            where code like '%#{queryString}%' or name like '%#{queryString}%'
         </if>
+    </select>
+    <select id="findAll" resultType="com.itheima.pojo.CheckItem">
+        select id,code,name from t_checkitem
     </select>
 </mapper>

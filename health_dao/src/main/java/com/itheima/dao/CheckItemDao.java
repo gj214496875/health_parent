@@ -11,11 +11,13 @@ public interface CheckItemDao {
 
     void add(CheckItem checkItem);
 
-    Page<CheckItem> findList(String queryString);
+    Page<CheckItem> findPage(String queryString);
 
     void delete(Integer id);
 
     void edit(CheckItem checkItem);
 
     Long findCountByCheckItemId(Integer checkitem_id);
+
+    List<CheckItem> findAll();
 }
