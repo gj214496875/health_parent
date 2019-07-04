@@ -2,26 +2,36 @@ package com.itheima.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.itheima.constant.MessageConstant;
+import com.itheima.constant.RedisConstant;
 import com.itheima.entity.PageResult;
 import com.itheima.entity.QueryPageBean;
 import com.itheima.entity.Result;
 import com.itheima.pojo.Setmeal;
 import com.itheima.service.SetmealService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 @RestController
 @RequestMapping("setmeal")
 public class SetmealController {
     @Reference
     private SetmealService setmealService;
+    @Autowired
+    private JedisPool jedisPool;
 
     @PostMapping("add")
     public Result add(@RequestBody Setmeal setmeal, Integer[] checkgroupIds) {
+        Jedis resource = jedisPool.getResource();
         try {
             setmealService.add(setmeal, checkgroupIds);
+            resource.sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES, setmeal.getImg());
         } catch (Exception e) {
             System.out.println(e);
             return new Result(false, MessageConstant.ADD_SETMEAL_FAIL);
+        } finally {
+            resource.close();
         }
         return new Result(true, MessageConstant.ADD_SETMEAL_SUCCESS);
     }
