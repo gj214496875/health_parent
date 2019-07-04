@@ -28,7 +28,7 @@
     <!-- 指定应用名称 -->
     <dubbo:application name="health_web" />
     <!--指定服务注册中心地址-->
-    <dubbo:registry address="zookeeper://192.168.106.129:2181"/>
+    <dubbo:registry address="zookeeper://192.168.25.128:2181"/>
     <!--批量扫描-->
     <dubbo:annotation package="com.itheima.controller" />
     <!--
@@ -43,5 +43,13 @@
         <property name="maxUploadSize" value="104857600" />
         <property name="maxInMemorySize" value="4096" />
         <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+    <!-- 引入属性配置文件 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:fastDFS.properties</value>
+            </list>
+        </property>
     </bean>
 </beans>

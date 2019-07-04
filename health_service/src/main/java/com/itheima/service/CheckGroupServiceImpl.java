@@ -47,8 +47,13 @@ public class CheckGroupServiceImpl implements CheckGroupService {
 
     @Override
     public void delete(Integer id) {
-
+        Long countByCheckItemId = checkGroupDao.findCountByCheckGroupId(id);
+        if (countByCheckItemId >= 0) {
+            //当前检查项被引用，不能删除
+            throw new RuntimeException("当前检查组被引用，不能删除");
+        }
         checkGroupDao.delete(id);
+        checkGroupDao.deleteByCheckGroupId(id);
     }
 
     @Override
@@ -62,5 +67,10 @@ public class CheckGroupServiceImpl implements CheckGroupService {
     @Override
     public List<Integer> findCheckItemIdsByCheckGroupId(Integer id) {
         return checkGroupDao.findCheckItemIdsByCheckGroupId(id);
+    }
+
+    @Override
+    public List<CheckGroup> findAll() {
+        return checkGroupDao.findAll();
     }
 }

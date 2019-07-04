@@ -29,8 +29,8 @@
             <if test="code != null">
                 code = #{code},
             </if>
-            <if test="age != null">
-                age = #{helpCode},
+            <if test="helpCode != null">
+                helpCode = #{helpCode},
             </if>
             <if test="attention != null">
                 attention = #{attention},
@@ -49,14 +49,20 @@
     <select id="deleteByCheckGroupId" parameterType="int">
         delete from t_checkgroup_checkitem where checkgroup_id = #{id}
     </select>
-    <select id="findPage" resultType="com.itheima.pojo.CheckGroup">
+    <select id="findPage" resultType="com.itheima.pojo.CheckGroup" parameterType="string">
         select * from t_checkgroup
-        <if test="queryString != null and queryString.length > 0">
-            where code like '%#{queryString}%' or name like '%#{queryString}%'
+        <if test="value != null and value.length > 0">
+            where code like '%${value}%' or name like '%${value}%' or helpCode like '%${value}%'
         </if>
     </select>
     <select id="findCheckItemIdsByCheckGroupId" parameterType="int" resultType="java.lang.Integer">
         select checkitem_id from t_checkgroup_checkitem where checkgroup_id = #{id}
+    </select>
+    <select id="findAll" resultType="com.itheima.pojo.CheckGroup">
+        select id,code,remark name from t_checkgroup
+    </select>
+    <select id="findCountByCheckGroupId" resultType="long" parameterType="int">
+        select count(*) from t_setmeal_checkgroup where checkgroup_id = #{checkgroup_id}
     </select>
 
 </mapper>
