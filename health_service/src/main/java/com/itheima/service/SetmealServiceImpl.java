@@ -52,6 +52,16 @@ public class SetmealServiceImpl implements SetmealService {
         setCheckGroupAndSetMeal(setmeal.getId(), checkgroupIds);
     }
 
+    @Override
+    public List<Setmeal> findAll() {
+        return setmealDao.findAll();
+    }
+
+    @Override
+    public Setmeal findById(String id) {
+        return setmealDao.findById(id);
+    }
+
     //设置检查组合和检查项的关联关系
     public void setCheckGroupAndSetMeal(Integer setmeal_id, Integer[] checkGroupIds) {
         if (checkGroupIds != null && checkGroupIds.length > 0) {

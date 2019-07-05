@@ -20,5 +20,12 @@
     <select id="getOrderSettingByMonth" resultType="com.itheima.pojo.OrderSetting">
         select * from t_ordersetting where orderDate like '${value}%'
     </select>
+    <select id="findByOrderDate" resultType="com.itheima.pojo.OrderSetting">
+         select * from t_ordersetting where orderDate = #{orderDate}
+    </select>
+    <!--更新已预约人数-->
+    <update id="editReservationsByOrderDate" parameterType="com.itheima.pojo.OrderSetting">
+        update t_ordersetting set reservations = #{reservations} where orderDate = #{orderDate}
+    </update>
 
 </mapper>

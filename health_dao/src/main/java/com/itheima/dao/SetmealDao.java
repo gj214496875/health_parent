@@ -22,4 +22,8 @@ public interface SetmealDao {
     void delete(Integer id);
 
     Page<Setmeal> findPage(String queryString);
+
+    List<Setmeal> findAll();
+
+    Setmeal findById(String id);
 }

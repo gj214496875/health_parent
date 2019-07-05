@@ -16,4 +16,8 @@ public interface SetmealService {
     List<Integer> findCheckGroupIdsBySetmealId(Integer id);
 
     void add(Setmeal setmeal, Integer[] checkgroupIds);
+
+    List<Setmeal> findAll();
+
+    Setmeal findById(String id);
 }
