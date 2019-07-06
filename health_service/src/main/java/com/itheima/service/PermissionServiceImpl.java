@@ -3,53 +3,51 @@ package com.itheima.service;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.itheima.dao.CheckItemDao;
+import com.itheima.dao.PermissionDao;
 import com.itheima.entity.PageResult;
 import com.itheima.entity.QueryPageBean;
 import com.itheima.pojo.CheckItem;
+import com.itheima.pojo.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 检查项服务
- */
-@Service(interfaceClass = CheckItemService.class)
+@Service(interfaceClass = PermissionService.class)
 @Transactional
-public class CheckItemServiceImpl implements CheckItemService {
+public class PermissionServiceImpl implements PermissionService {
     @Autowired
-    private CheckItemDao checkItemDao;
-
-    //新增
-    public void add(CheckItem checkItem) {
-        checkItemDao.add(checkItem);
-    }
+    private PermissionDao permissionDao;
 
     @Override
     public PageResult findPage(QueryPageBean queryPageBean) {
         PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
-        Page<CheckItem> list = checkItemDao.findPage(queryPageBean.getQueryString());
+        Page<Permission> list = permissionDao.findPage(queryPageBean.getQueryString());
         return new PageResult(list.getTotal(), list.getResult());
     }
 
     @Override
+    public void add(Permission permission) {
+        permissionDao.add(permission);
+    }
+
+    @Override
+    public void edit(Permission permission) {
+        permissionDao.edit(permission);
+    }
+
+    @Override
     public void delete(Integer id) {
-        Long countByCheckItemId = checkItemDao.findCountByCheckItemId(id);
+        Long countByCheckItemId = permissionDao.findCountByPermissionId(id);
         if (countByCheckItemId > 0) {
             //当前检查项被引用，不能删除
             throw new RuntimeException("当前检查项被引用，不能删除");
         }
-        checkItemDao.delete(id);
+        permissionDao.delete(id);
     }
 
     @Override
-    public void edit(CheckItem checkItem) {
-        checkItemDao.edit(checkItem);
-    }
-
-    @Override
-    public List<CheckItem> findAll() {
-        return checkItemDao.findAll();
+    public List<Permission> findAll() {
+        return permissionDao.findAll();
     }
 }

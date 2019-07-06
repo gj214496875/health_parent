@@ -2,10 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.itheima.dao.PermissionDao">
+    <insert id="add">
+        insert into t_permission (name,keyword,description) values (#{name},#{keyword},#{description})
+    </insert>
+    <update id="edit">
+        update t_permission
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="keyword != null">
+                keyword = #{keyword},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from t_permission where id = #{id}
+    </delete>
 
     <select id="findByRoleId" resultType="com.itheima.pojo.Permission">
         select  p.*
       		from t_permission p ,t_role_permission rp
       		where p.id = rp.permission_id and rp.role_id = #{roleId}
+    </select>
+    <select id="findPage" resultType="com.itheima.pojo.Permission">
+        select * from t_permission
+        <if test="value != null and value.length > 0">
+            where name like '%${value}%'
+        </if>
+    </select>
+    <select id="findAll" resultType="com.itheima.pojo.Permission">
+        select * from t_permission
+    </select>
+    <select id="findCountByPermissionId" resultType="java.lang.Long">
+        select count(*) from t_role_permission where permission_id = #{permission_id}
     </select>
 </mapper>

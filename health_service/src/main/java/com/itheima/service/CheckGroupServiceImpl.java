@@ -48,7 +48,7 @@ public class CheckGroupServiceImpl implements CheckGroupService {
     @Override
     public void delete(Integer id) {
         Long countByCheckItemId = checkGroupDao.findCountByCheckGroupId(id);
-        if (countByCheckItemId >= 0) {
+        if (countByCheckItemId > 0) {
             //当前检查项被引用，不能删除
             throw new RuntimeException("当前检查组被引用，不能删除");
         }

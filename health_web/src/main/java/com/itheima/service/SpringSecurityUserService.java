@@ -1,9 +1,8 @@
-package com.itheima.Service;
+package com.itheima.service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.itheima.pojo.Permission;
 import com.itheima.pojo.Role;
-import com.itheima.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
