@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>传智健康</title>
+    <meta name="description" content="传智健康">
+    <meta name="keywords" content="传智健康">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.10.1/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="hold-transition">
+<div id="app">
+    <div class="content-header">
+        <h1>工作台
+            <small>菜单管理</small>
+        </h1>
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>工作台</el-breadcrumb-item>
+            <el-breadcrumb-item>菜单管理</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
+    <div class="app-container">
+        <div class="box">
+            <div class="filter-container">
+                <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
+            </div>
+            <el-table size="small"
+                      :data="dataList"
+                      style="width: 100%;margin-bottom: 20px;"
+                      row-key="id"
+                      border
+                      default-expand-all
+                      :tree-props="{children: 'children', name:'hasChildren'}">
+                <el-table-column type="index" align="center" label="序号"></el-table-column>
+                <el-table-column prop="name" label="菜单名称" align="center"></el-table-column>
+                <el-table-column prop="icon" label="图标" align="center">
+                    <template slot-scope="scope">
+                        <span :class="scope.row.icon"></span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="linkUrl" label="访问路径" align="center"></el-table-column>
+                <el-table-column prop="path" label="路由路径" align="center"></el-table-column>
+                <el-table-column prop="priority" label="优先级" align="center"></el-table-column>
+                <el-table-column prop="description" label="描述" align="center"></el-table-column>
+                <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                        <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+                        <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- 新增标签弹层 -->
+            <div class="add-form">
+                <el-dialog title="新增菜单" :visible.sync="dialogFormVisible">
+                    <template>
+                        <el-tabs v-model="activeName" type="card">
+                            <el-tab-pane label="基本信息" name="first">
+                                <el-form label-position="right" label-width="100px">
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="选择父节点">
+                                                <el-select v-model="formData.parentMenuId">
+                                                    <el-option label="父节点" :value="p"></el-option>
+                                                    <span v-for="data in dataList">
+                                                            <el-option :label="data.name" :value="data.id"></el-option>
+                                                    </span>
+                                                </el-select>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="菜单名称">
+                                                <el-input v-model="formData.name"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="路由路径">
+                                                <el-input v-model="formData.path"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="优先级">
+                                                <el-input v-model="formData.priority"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-if="formData.parentMenuId!=0">
+                                        <el-col :span="24">
+                                            <el-form-item label="访问路径">
+                                                <el-input v-model="formData.linkUrl"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="描述">
+                                                <el-input v-model="formData.description" type="textarea"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form>
+                            </el-tab-pane>
+                            <el-tab-pane label="图标信息" name="icon">
+                                <div class="checkScrol" v-if="formData.parentMenuId==0">
+                                    <table class="datatable">
+                                        <tr v-for="(c,index) in iconList">
+                                            <td>
+                                                <el-radio v-model="formData.icon" :label="c">
+                                                    <span :class="c"></span>
+                                                </el-radio>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取消</el-button>
+                        <el-button type="primary" @click="handleAdd()">确定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
+            <!-- 编辑标签弹层 -->
+            <div class="add-form">
+                <el-dialog title="编辑菜单" :visible.sync="dialogFormVisible4Edit">
+                    <template>
+                        <el-tabs v-model="activeName" type="card">
+                            <el-tab-pane label="基本信息" name="first">
+                                <el-form label-position="right" label-width="100px">
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="选择父节点">
+                                                <el-select v-model="formData.parentMenuId">
+                                                    <el-option label="父节点" :value="p"></el-option>
+                                                    <span v-for="data in dataList">
+                                                            <el-option :label="data.name" :value="data.id"></el-option>
+                                                    </span>
+                                                </el-select>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="菜单名称">
+                                                <el-input v-model="formData.name"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="路由路径">
+                                                <el-input v-model="formData.path"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="优先级">
+                                                <el-input v-model="formData.priority"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row v-if="formData.parentMenuId!=0">
+                                        <el-col :span="24">
+                                            <el-form-item label="访问路径">
+                                                <el-input v-model="formData.linkUrl"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="24">
+                                            <el-form-item label="描述">
+                                                <el-input v-model="formData.description" type="textarea"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </el-form>
+                            </el-tab-pane>
+                            <el-tab-pane label="图标信息" name="icon">
+                                <div class="checkScrol" v-if="formData.parentMenuId==0">
+                                    <table class="datatable">
+                                        <tr v-for="(c,index) in iconList">
+                                            <td>
+                                                <el-radio v-model="formData.icon" :label="c">
+                                                    <span :class="c"></span>
+                                                </el-radio>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
+                        <el-button type="primary" @click="handleEdit()">确定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="https://unpkg.com/element-ui@2.10.1/lib/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            p: 0,
+            activeName: 'first',
+            dataList: [],//当前页要展示的分页列表数据
+            formData: {},//表单数据
+            iconList: {},//图标数据
+            dialogFormVisible: false,//增加表单是否可见
+            dialogFormVisible4Edit: false,//编辑表单是否可见
+        },
+        //钩子函数，VUE对象初始化完成后自动执行
+        created() {
+            this.findAll();
+            this.loadIcon();
+        },
+        methods: {
+            loadIcon() {
+                axios.get("/menu/findIcon.do").then((response) => {
+                    this.iconList = response.data.data;
+                })
+            },
+            //编辑
+            handleEdit() {
+
+                //表单数据校验通过，发送ajax请求将表单数据提交到后台
+                axios.put("/menu/edit.do", this.formData).then((response) => {
+                    //隐藏新增窗口
+                    this.dialogFormVisible4Edit = false;
+                    //判断后台返回的flag值，true表示添加操作成功，false为添加操作失败
+                    if (response.data.flag) {
+                        this.$message({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        this.findAll();
+                    } else {
+                        this.$message.error(response.data.message);
+                    }
+                })
+
+            },
+            //添加
+            handleAdd() {
+                //校验表单输入项是否合法
+                //表单数据校验通过，发送ajax请求将表单数据提交到后台
+                axios.post("/menu/add.do", this.formData).then((response) => {
+                    //隐藏新增窗口
+                    this.dialogFormVisible = false;
+                    //判断后台返回的flag值，true表示添加操作成功，false为添加操作失败
+                    if (response.data.flag) {
+                        this.$message({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        this.findAll();
+                    } else {
+                        this.$message.error(response.data.message);
+                    }
+                })
+            },
+            findAll() {
+                axios.get("/menu/findAll.do").then((response) => {
+                    this.dataList = response.data.data;
+                })
+            },
+            // 重置表单
+            resetForm() {
+                this.formData = {};
+                this.activeName = 'first';
+            },
+            // 弹出添加窗口
+            handleCreate() {
+                this.resetForm();
+                this.dialogFormVisible = true;
+            },
+            // 弹出编辑窗口
+            handleUpdate(row) {
+                this.resetForm();
+                //设置编辑窗口属性，dialogFormVisible4Edit为true表示显示
+                this.dialogFormVisible4Edit = true;
+                //为模型数据设置值，基于VUE双向数据绑定回显到页面
+                this.formData = row;
+            },
+            //权限不足提示
+            showMessage(r) {
+                if (r == 'Error: Request failed with status code 403') {
+                    //权限不足
+                    this.$message.error('无访问权限');
+                    return;
+                } else {
+                    this.$message.error('未知错误');
+                    return;
+                }
+            },
+            // 删除
+            handleDelete(row) {
+                //alert(row.id);
+                this.$confirm("确认删除吗？", "提示", {type: 'warning'}).then(() => {
+                    //点击确定按钮时只需此处代码
+                    //alert('用户点击的是确定按钮');
+                    axios.delete("/menu/delete.do?id=" + row.id + "&parentMenuId=" + row.parentMenuId).then((res) => {
+                        if (!res.data.flag) {
+                            //删除失败
+                            this.$message.error(res.data.message);
+                        } else {
+                            //删除成功
+                            this.$message({
+                                message: res.data.message,
+                                type: 'success'
+                            });
+                            this.findAll();
+                        }
+                    }).catch((r) => {
+                        this.showMessage(r);
+                    });
+                }).catch(() => {
+                    //点击取消按钮执行此代码
+                    this.$message('操作已取消');
+                });
+            }
+        }
+    })
+</script>
+</html>
