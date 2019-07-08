@@ -57,4 +57,14 @@ public class MenuServiceImpl implements MenuService {
     public void edit(Menu menu) {
         menuDao.edit(menu);
     }
+
+    @Override
+    public List<String> findUserMenu(String username) {
+        return menuDao.findUserMenu(username);
+    }
+
+    @Override
+    public List<Integer> findMenuIdsByRoleId(Integer id) {
+        return menuDao.findMenuIdsByRoleId(id);
+    }
 }

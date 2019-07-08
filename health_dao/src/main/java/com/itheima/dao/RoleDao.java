@@ -27,4 +27,8 @@ public interface RoleDao {
     void edit(Role role);
 
     List<Integer> findPermissionIdsByRoleId(Integer id);
+
+    void deleteMenuByRoleId(Integer id);
+
+    void setRoleAndMenu(Map<String, Integer> map);
 }

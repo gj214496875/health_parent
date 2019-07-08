@@ -21,4 +21,8 @@ public interface MenuDao {
     void deleteByMenuId(Integer id);
 
     void delete(Integer id);
+
+    List<String> findUserMenu(String username);
+
+    List<Integer> findMenuIdsByRoleId(Integer id);
 }

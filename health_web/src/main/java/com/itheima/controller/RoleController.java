@@ -26,9 +26,9 @@ public class RoleController {
     }
 
     @PostMapping("add")
-    public Result add(@RequestBody Role role, Integer[] permissionIds) {
+    public Result add(@RequestBody Role role, Integer[] permissionIds, Integer[] menuIds) {
         try {
-            roleService.add(role, permissionIds);
+            roleService.add(role, permissionIds, menuIds);
         } catch (Exception e) {
             System.out.println(e);
             return new Result(false, MessageConstant.ADD_ROLE_FAIL);

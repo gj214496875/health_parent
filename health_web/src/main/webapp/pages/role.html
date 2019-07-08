@@ -9,13 +9,13 @@
     <meta name="keywords" content="传智健康">
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.10.1/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <!-- 引入组件库 -->
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script src="../js/vue.js"></script>
-    <script src="../plugins/elementui/index.js"></script>
+    <script src="https://unpkg.com/element-ui@2.10.1/lib/index.js"></script>
     <script src="../js/axios-0.18.0.js"></script>
     <style>
         .datatable {
@@ -138,6 +138,21 @@
                                     </table>
                                 </div>
                             </el-tab-pane>
+                            <el-tab-pane label="权限信息" name="third">
+                                <div class="checkScrol">
+                                    <el-tree
+                                            :props="props"
+                                            :data="menuData"
+                                            check-strictly
+                                            show-checkbox
+                                            default-expand-all
+                                            node-key="id"
+                                            ref="tree"
+                                            highlight-current
+                                            @check-change="handleCheckChange">
+                                    </el-tree>
+                                </div>
+                            </el-tab-pane>
                         </el-tabs>
                     </template>
                     <div slot="footer" class="dialog-footer">
@@ -201,6 +216,21 @@
                                     </table>
                                 </div>
                             </el-tab-pane>
+                            <el-tab-pane label="权限信息" name="third">
+                                <div class="checkScrol">
+                                    <el-tree
+                                            :props="props"
+                                            :data="menuData"
+                                            check-strictly
+                                            show-checkbox
+                                            default-expand-all
+                                            node-key="id"
+                                            ref="tree"
+                                            highlight-current
+                                            @check-change="handleCheckChange">
+                                    </el-tree>
+                                </div>
+                            </el-tab-pane>
                         </el-tabs>
                     </template>
                     <div slot="footer" class="dialog-footer">
@@ -225,18 +255,40 @@
                 total: 0,
                 queryString: null,
             },
+            props: {
+                label: 'title',
+                children: 'children'
+            },
             dataList: [],//列表数据
             formData: {},//表单数据
+            menuData: [],
             tableData: [],//新增和编辑表单中对应的检查项列表数据
             permissionIds: [],//新增和编辑表单中检查项对应的复选框，基于双向绑定可以进行回显和数据提交
+            menuIds: [],
             dialogFormVisible: false,//控制添加窗口显示/隐藏
             dialogFormVisible4Edit: false,//控制编辑窗口显示/隐藏
         },
         created() {
             this.findPage();
             this.loadPermission();
+            this.loadMenu();
         },
         methods: {
+            handleCheckChange() {
+                this.menuIds = this.$refs.tree.getCheckedKeys();
+                console.log(this.menuIds);
+            },
+            loadMenu() {
+                //发送ajax请求查询所有检查项信息
+                axios.get("/menu/findAll.do").then((res) => {
+                    if (res.data.flag) {
+                        //将检查项列表数据赋值给模型数据用于页面表格展示
+                        this.menuData = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+            },
             loadPermission() {
                 //发送ajax请求查询所有检查项信息
                 axios.get("/permission/findAll.do").then((res) => {
@@ -267,7 +319,7 @@
             },
             //添加
             handleAdd() {
-                axios.post("/role/add.do?permissionIds=" + this.permissionIds, this.formData).then((response) => {
+                axios.post("/role/add.do?permissionIds=" + this.permissionIds + "&menuIds=" + this.menuIds, this.formData).then((response) => {
                     //隐藏新增窗口
                     this.dialogFormVisible = false;
                     //判断后台返回的flag值，true表示添加操作成功，false为添加操作失败
@@ -296,6 +348,13 @@
                 this.activeName = 'first';
                 //重置
                 this.permissionIds = [];
+
+                this.menuIds = [];
+
+                if (this.$refs.tree) {
+                    this.$refs.tree.setCheckedKeys([])
+                }
+
             },
             // 弹出添加窗口
             handleCreate() {
@@ -310,6 +369,14 @@
                     if (res.data.flag) {
                         //将检查项列表数据赋值给模型数据用于页面表格展示
                         this.permissionIds = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                });
+                axios.get("/menu/findMenuIdsByRoleId.do?id=" + row.id).then((res) => {
+                    if (res.data.flag) {
+                        //将检查项列表数据赋值给模型数据用于页面表格展示
+                        this.$refs.tree.setCheckedKeys(res.data.data);
                     } else {
                         this.$message.error(res.data.message);
                     }

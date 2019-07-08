@@ -9,7 +9,7 @@ import java.util.List;
 public interface RoleService {
     List<Role> findAll();
 
-    void add(Role role, Integer[] permissionIds);
+    void add(Role role, Integer[] permissionIds, Integer[] menuIds);
 
     PageResult findPage(QueryPageBean queryPageBean);
 

@@ -4,7 +4,7 @@
 <mapper namespace="com.itheima.dao.MenuDao">
     <resultMap id="userMap" type="com.itheima.pojo.Menu">
         <id column="id" property="id"></id>
-        <result column="name" property="name"/>
+        <result column="title" property="title"/>
         <result column="linkUrl" property="linkUrl"/>
         <result column="path" property="path"/>
         <result column="priority" property="priority"/>
@@ -16,7 +16,7 @@
         -->
         <collection property="children" ofType="com.itheima.pojo.Menu">
             <id column="zid" property="id"></id>
-            <result column="zname" property="name"/>
+            <result column="ztitle" property="title"/>
             <result column="zlinkUrl" property="linkUrl"/>
             <result column="zpath" property="path"/>
             <result column="zpriority" property="priority"/>
@@ -26,14 +26,14 @@
         </collection>
     </resultMap>
     <insert id="add">
-        insert into t_menu (name,linkUrl,path,priority,icon,description,parentMenuId)
-        values (#{name},#{linkUrl},#{path},#{priority},#{icon},#{description},#{parentMenuId})
+        insert into t_menu (title,linkUrl,path,priority,icon,description,parentMenuId)
+        values (#{title},#{linkUrl},#{path},#{priority},#{icon},#{description},#{parentMenuId})
     </insert>
     <update id="edit">
         update t_menu
         <set>
-            <if test="name != null">
-                name = #{name},
+            <if test="title != null">
+                title = #{title},
             </if>
             <if test="linkUrl != null">
                 linkUrl = #{linkUrl},
@@ -76,11 +76,11 @@
             f.priority,
             f.path,
             f.linkUrl,
-            f.`name`,
+            f.title,
             f.id,
             f.parentMenuId,
             z.id AS zid,
-            z.`name` AS zname,
+            z.title AS ztitle,
             z.linkUrl AS zlinkUrl,
             z.path AS zpath,
             z.priority AS zpriority,
@@ -101,5 +101,20 @@
     </select>
     <select id="findCountById" resultType="java.lang.Long">
         select count(*) from t_menu where parentMenuId = #{id}
+    </select>
+    <select id="findUserMenu" resultType="java.lang.String">
+        SELECT
+            m.title
+        FROM
+            t_user AS u
+        INNER JOIN t_user_role AS ur ON u.id = ur.user_id
+        INNER JOIN t_role AS r ON ur.role_id = r.id
+        INNER JOIN t_role_menu AS rm ON rm.role_id = r.id
+        INNER JOIN t_menu AS m ON rm.menu_id = m.id
+        WHERE
+            u.username = #{username}
+    </select>
+    <select id="findMenuIdsByRoleId" resultType="java.lang.Integer">
+        select menu_id from t_role_menu where role_id = #{id}
     </select>
 </mapper>

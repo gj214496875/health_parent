@@ -7,6 +7,7 @@ import com.itheima.entity.QueryPageBean;
 import com.itheima.entity.Result;
 import com.itheima.pojo.Menu;
 import com.itheima.service.MenuService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,6 +36,18 @@ public class MenuController {
             return new Result(false, MessageConstant.QUERY_MENU_FAIL);
         }
     }
+    @GetMapping("findUserMenu")
+    public Result findUserMenu() {
+        try {
+            org.springframework.security.core.userdetails.User user =
+                    (org.springframework.security.core.userdetails.User)
+                            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return new Result(true, MessageConstant.QUERY_MENU_SUCCESS, menuService.findUserMenu(user.getUsername()));
+        } catch (Exception e) {
+            System.out.println(e);
+            return new Result(false, MessageConstant.QUERY_MENU_FAIL);
+        }
+    }
 
     @GetMapping("findIcon")
     public Result findIcon() {
@@ -43,6 +56,15 @@ public class MenuController {
         } catch (Exception e) {
             System.out.println(e);
             return new Result(false, MessageConstant.QUERY_ICON_FAIL);
+        }
+    }
+    @GetMapping("findMenuIdsByRoleId")
+    public Result findMenuIdsByRoleId(Integer id) {
+        try {
+            return new Result(true, MessageConstant.QUERY_MENU_SUCCESS, menuService.findMenuIdsByRoleId(id));
+        } catch (Exception e) {
+            System.out.println(e);
+            return new Result(false, MessageConstant.QUERY_MENU_FAIL);
         }
     }
 

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Service(interfaceClass = RoleService.class)
 @Transactional
 public class RoleServiceImpl implements RoleService {
@@ -25,9 +26,21 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void add(Role role, Integer[] permissionIds) {
+    public void add(Role role, Integer[] permissionIds, Integer[] menuIds) {
         roleDao.add(role);
         setRoleAndPermission(role.getId(), permissionIds);
+        setRoleAndMenu(role.getId(), menuIds);
+    }
+
+    private void setRoleAndMenu(Integer id, Integer[] menuIds) {
+        if (menuIds != null && menuIds.length > 0) {
+            for (Integer menuId : menuIds) {
+                Map<String, Integer> map = new HashMap<>();
+                map.put("role_id", id);
+                map.put("menu_id", menuId);
+                roleDao.setRoleAndMenu(map);
+            }
+        }
     }
 
     private void setRoleAndPermission(Integer id, Integer[] permissionIds) {
@@ -55,8 +68,9 @@ public class RoleServiceImpl implements RoleService {
             //当前检查项被引用，不能删除
             throw new RuntimeException("当前角色被引用，不能删除");
         }
-        roleDao.delete(id);
         roleDao.deleteByRoleId(id);
+        roleDao.deleteMenuByRoleId(id);
+        roleDao.delete(id);
     }
 
     @Override

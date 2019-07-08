@@ -18,4 +18,8 @@ public interface MenuService {
     void delete(Integer id,Integer parentMenuId);
 
     void edit(Menu menu);
+
+    List<String> findUserMenu(String username);
+
+    List<Integer> findMenuIdsByRoleId(Integer id);
 }
