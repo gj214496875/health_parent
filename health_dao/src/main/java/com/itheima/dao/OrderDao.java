@@ -14,6 +14,8 @@ public interface OrderDao {
 
     Integer findOrderCountByDate(String date);
 
+    Integer findOrderCountBySetmealId(Integer id);
+
     Integer findOrderCountAfterDate(String date);
 
     Integer findVisitsCountByDate(String date);

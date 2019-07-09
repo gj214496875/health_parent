@@ -8,4 +8,6 @@ public interface OrderService {
     Result order(Map orderInfo) throws Exception;
 
     Result findById4Detail(Integer id) throws Exception;
+
+    Integer findOrderCountBySetmealId(Integer id);
 }

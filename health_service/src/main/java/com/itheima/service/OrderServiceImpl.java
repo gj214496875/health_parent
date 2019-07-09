@@ -86,12 +86,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Result findById4Detail(Integer id) throws Exception {
         Map map = orderDao.findById4Detail(id);
-        if(map != null){
+        if (map != null) {
             //处理日期格式
             Date orderDate = (Date) map.get("orderDate");
-            map.put("orderDate",DateUtils.parseDate2String(orderDate));
-            return new Result(true,MessageConstant.QUERY_ORDER_SUCCESS,map);
+            map.put("orderDate", DateUtils.parseDate2String(orderDate));
+            return new Result(true, MessageConstant.QUERY_ORDER_SUCCESS, map);
         }
-        return new Result(false,MessageConstant.QUERY_ORDER_FAIL);
+        return new Result(false, MessageConstant.QUERY_ORDER_FAIL);
+    }
+
+    @Override
+    public Integer findOrderCountBySetmealId(Integer id) {
+        return orderDao.findOrderCountBySetmealId(id);
     }
 }

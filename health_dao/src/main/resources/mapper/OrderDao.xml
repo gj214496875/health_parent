@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.itheima.dao.OrderDao" >
+<mapper namespace="com.itheima.dao.OrderDao">
     <resultMap id="baseResultMap" type="com.itheima.pojo.Order">
         <id column="id" property="id"/>
         <result column="member_id" property="memberId"/>
@@ -72,6 +72,11 @@
     <!--根据日期统计到诊数，统计指定日期之后的到诊数-->
     <select id="findVisitsCountAfterDate" parameterType="string" resultType="int">
         select count(id) from t_order where orderDate &gt;= #{value} and orderStatus = '已到诊'
+    </select>
+
+    <!--根据日期统计到诊数，统计指定日期之后的到诊数-->
+    <select id="findOrderCountBySetmealId" parameterType="int" resultType="int">
+        select count(id) from t_order where setmeal_id = #{value}
     </select>
 
     <!--热门套餐，查询前5条-->
